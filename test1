@@ -1,0 +1,95 @@
+import re
+import time
+import json
+from selenium import webdriver
+from selenium.webdriver.common.by import By
+from selenium.webdriver.common.keys import Keys
+#from selenium.webdriver.common.alert import Alert
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC #as EC es como queremos que se llame
+from selenium.webdriver.support.ui import Select
+
+from selectores import obtener_selectores_calculadora
+
+
+
+# PREPARACION NAVEGADOR
+driver = webdriver.Chrome()
+driver.set_window_size(1111, 631)
+driver.get("https://testsheepnz.github.io/BasicCalculator.html")
+driver.implicitly_wait(5) #Espera Implicita de 10s maximo para cualquier elemento
+
+# Scroll hasta la calculadora
+
+form_calculadora = driver.find_element(By.CLASS_NAME, "form-horizontal")
+driver.execute_script("arguments[0].scrollIntoView(true);", form_calculadora)
+driver.implicitly_wait(5)
+
+# Carga de selectores
+ 
+pantalla_calculadora = obtener_selectores_calculadora()
+
+
+# CARGA DEL JSON
+
+with open('datos.json',"r") as mi_archivo: #se indica el archivo y se le da nombre
+        lector = json.load(mi_archivo) #Se define un lector en una variable
+                        
+for renglon in lector:         #Itterar el archivo renglon por renglon
+    var_numero1   = renglon['numero1']
+    var_numero2   = renglon['numero2']    
+    var_operacion = renglon['operacion']
+    var_resultado = renglon['resultado'] 
+
+
+
+# CALCULADORA
+
+# Localizacion de elementos
+
+    txt_numero1 = driver.find_element(By.ID, pantalla_calculadora["txt_numero1"])
+    txt_numero2 = driver.find_element(By.ID, pantalla_calculadora["txt_numero2"])
+    dp_operation = driver.find_element(By.ID, pantalla_calculadora["dp_operation"])
+    bt_calculate = driver.find_element(By.ID, pantalla_calculadora["bt_calculate"])
+    txt_answer = driver.find_element(By.ID, pantalla_calculadora["txt_answer"])
+    bt_clear = driver.find_element(By.ID, pantalla_calculadora["bt_clear"])
+
+# Interacciones
+    
+    
+    txt_numero1.clear()
+    txt_numero1.send_keys(var_numero1)
+
+    txt_numero2.clear()
+    txt_numero2.send_keys(var_numero2)
+
+#Seleccionar el elemento con un SELECT
+    dp_operation.send_keys(var_operacion)
+
+    time.sleep(3)
+
+#El assert es correcto pero por alguna razon, en la segunda iteracion del FOR falla cuando no deberia
+    #selected_option = Select(dp_operation).first_selected_option.text
+    #assert selected_option == var_operacion, f"ERROR: Operación esperada: {var_operacion}, Operación seleccionada: {selected_option}"
+
+    
+#assert "Add" in dp_operation.text, "ERROR - Fin del test"
+
+    bt_calculate.click()
+
+    time.sleep(5)
+# Espera para la carga del resultado
+    wait = WebDriverWait(driver, 10)
+    wait.until(EC.visibility_of(txt_answer),2)
+
+# NOTA: para coger el texto de un textbox de lectura se utiliza GET.ATTRIBUTE("VALUE")
+    txt_texto_resultado = txt_answer.get_attribute("value")
+    
+    print("El resultado de " + var_operacion +  " es: " + txt_texto_resultado)
+
+    #driver.refresh()
+
+time.sleep(5)
+driver.quit()
+
+

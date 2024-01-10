@@ -1,0 +1,39 @@
+[
+
+
+    {
+        "numero1"   : "5",
+        "numero2"   : "5",
+        "operacion" : "Add",
+        "resultado" : "10"
+
+    },
+    
+    {
+        "numero1"   : "5",
+        "numero2"   : "5",
+        "operacion" : "Substract",
+        "resultado" : "0"
+    }, 
+
+    {
+        "numero1"   : "5",
+        "numero2"   : "5",
+        "operacion" : "Mulitply",
+        "resultado" : "25"
+    },
+
+    {
+        "numero1"   : "5",
+        "numero2"   : "5",
+        "operacion" : "Divide",
+        "resultado" : "1"
+    },
+
+    {
+        "numero1"   : "5",
+        "numero2"   : "5",
+        "operacion" : "Concatenate",
+        "resultado" : "55"
+    }
+]
